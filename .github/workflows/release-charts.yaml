@@ -35,6 +35,12 @@ jobs:
         run: |
           mkdir -p /tmp/helm-packages
           for chart in charts/*/; do
+            name=$(basename "$chart")
+            version=$(grep '^version:' "$chart/Chart.yaml" | awk '{print $2}')
+            if helm show chart "oci://ghcr.io/${{ github.repository_owner }}/helm-charts/$name" --version "$version" > /dev/null 2>&1; then
+              echo "$name:$version already published, skipping."
+              continue
+            fi
             helm dependency update "$chart"
             helm package "$chart" --destination /tmp/helm-packages
           done
