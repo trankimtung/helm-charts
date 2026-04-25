@@ -1,0 +1,6 @@
+dependencies:
+- name: common
+  repository: oci://ghcr.io/trankimtung/helm-charts
+  version: 0.1.0
+digest: sha256:097c75097986e551f48fd2688f1e852597daa100ca181f048f555d946ffab181
+generated: "2026-04-25T11:26:26.043545+08:00"

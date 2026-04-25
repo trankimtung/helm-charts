@@ -1,0 +1,134 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  uid: 1000
+  gid: 1000
+
+components:
+  navidrome:
+    deployments:
+      navidrome:
+        replicas: 1
+        strategy:
+          type: Recreate
+
+        initContainers: []
+
+        extraEnv: {}       # Injected into all containers.
+        envFrom: []        # Injected into all containers.
+
+        extraVolumes: []
+        extraVolumeMounts: []  # Mounted into all containers.
+
+        containers:
+          navidrome:
+            image: deluan/navidrome:0.61.0@sha256:b14a6acb5cd5ee73f3a13d63d8d68ede82dedb796aa522fbada94769d990cf0b
+            imagePullPolicy: IfNotPresent
+            args:
+              - -c
+              - /config/navidrome.toml
+
+            ports:
+              navidrome:
+                containerPort: 4533
+                protocol: TCP
+
+            uid: ""  # Defaults to global.uid.
+            gid: ""  # Defaults to global.gid.
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            env:
+              ND_DATAFOLDER: /data
+              ND_PORT: "4533"
+
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              startup:
+                httpGet:
+                  path: /
+                  port: navidrome
+                failureThreshold: 30
+                periodSeconds: 5
+
+              liveness:
+                httpGet:
+                  path: /
+                  port: navidrome
+                periodSeconds: 10
+
+              readiness:
+                httpGet:
+                  path: /
+                  port: navidrome
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
+
+    services:
+      navidrome:
+        type: ClusterIP
+        ports:
+          - name: navidrome
+            port: 4533
+        extraLabels: {}
+        annotations: {}
+
+    ingresses:
+      navidrome:
+        enabled: false
+        className: ""
+        portName: navidrome
+        extraLabels: {}
+        annotations:
+          kubernetes.io/tls-acme: "true"
+        hosts:
+          - navidrome.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""  # Defaults to <fullname>-tls.
+
+    # ConfigMaps to create and mount. Each key is the ConfigMap name suffix.
+    cm:
+      config:
+        mountTo:
+          navidrome: /config
+        # Keys are filenames, values are file contents.
+        # Ref: https://www.navidrome.org/docs/usage/configuration-options/
+        data:
+          navidrome.toml: |
+            MusicFolder = "/music"
+            LogLevel = "info"
+
+    persistence:
+      data:
+        enabled: false
+        existingClaim: ""  # Use a pre-existing PVC. Skips PVC creation; enabled is ignored.
+        mountTo:
+          navidrome: /data
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+        extraLabels: {}
+        annotations: {}
