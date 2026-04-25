@@ -1,0 +1,17 @@
+apiVersion: v2
+name: audiobookshelf
+description: A Helm chart for Audiobookshelf - a self-hosted audiobook and podcast server
+icon: https://www.audiobookshelf.org/Logo.png
+type: application
+version: 0.5.0
+appVersion: 2.33.2
+keywords:
+  - audiobookshelf
+  - audiobook
+  - podcast
+maintainers:
+  - name: trankimtung
+dependencies:
+  - name: common
+    version: 0.1.0
+    repository: oci://ghcr.io/trankimtung/helm-charts

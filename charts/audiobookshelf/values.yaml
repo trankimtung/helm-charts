@@ -1,0 +1,123 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  uid: 1000
+  gid: 1000
+
+components:
+  audiobookshelf:
+    deployments:
+      audiobookshelf:
+        replicas: 1
+        strategy:
+          type: Recreate
+
+        initContainers: []
+
+        # Extra env vars injected into all containers. ref: https://www.audiobookshelf.org/docs#env-configuration
+        extraEnv: {}
+        envFrom: []
+
+        extraVolumes: []
+        extraVolumeMounts: []
+
+        containers:
+          audiobookshelf:
+            image: ghcr.io/advplyr/audiobookshelf:2.33.2@sha256:a44ed89b3e845faa1f7d353f2cc89b2fcd8011737dd14075fa963cf9468da3a5
+            imagePullPolicy: IfNotPresent
+
+            ports:
+              audiobookshelf:
+                containerPort: 13378
+                protocol: TCP
+
+            uid: ""  # Defaults to global.uid.
+            gid: ""  # Defaults to global.gid.
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            env:
+              PORT: "13378"
+
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              startup:
+                httpGet:
+                  path: /
+                  port: audiobookshelf
+                failureThreshold: 30
+                periodSeconds: 5
+
+              liveness:
+                httpGet:
+                  path: /
+                  port: audiobookshelf
+                periodSeconds: 10
+
+              readiness:
+                httpGet:
+                  path: /
+                  port: audiobookshelf
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: 500m
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
+
+    services:
+      audiobookshelf:
+        type: ClusterIP
+        ports:
+          - name: audiobookshelf
+            port: 13378
+
+    ingresses:
+      audiobookshelf:
+        enabled: false
+        className: ""
+        portName: audiobookshelf
+        hosts:
+          - audiobookshelf.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""  # Defaults to <fullname>-tls.
+
+    persistence:
+      config:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          audiobookshelf: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""  # Leave empty for the cluster default StorageClass.
+      metadata:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          audiobookshelf: /metadata
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""  # Leave empty for the cluster default StorageClass.
