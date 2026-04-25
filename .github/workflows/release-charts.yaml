@@ -38,12 +38,18 @@ jobs:
             name=$(basename "$chart")
             version=$(grep '^version:' "$chart/Chart.yaml" | awk '{print $2}')
             if helm show chart "oci://ghcr.io/${{ github.repository_owner }}/helm-charts/$name" --version "$version" > /dev/null 2>&1; then
-              echo "$name:$version already published, skipping."
+              echo "$name:$version already published."
               continue
             fi
             helm dependency update "$chart"
             helm package "$chart" --destination /tmp/helm-packages
           done
-          for pkg in /tmp/helm-packages/*.tgz; do
+          shopt -s nullglob
+          pkgs=(/tmp/helm-packages/*.tgz)
+          if [ ${#pkgs[@]} -eq 0 ]; then
+            echo "No new charts to push."
+            exit 0
+          fi
+          for pkg in "${pkgs[@]}"; do
             helm push "$pkg" oci://ghcr.io/${{ github.repository_owner }}/helm-charts
           done
