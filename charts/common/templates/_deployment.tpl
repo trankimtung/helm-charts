@@ -63,7 +63,7 @@ spec:
           {{- end }}
           {{- end }}
           env:
-            {{- range $k, $v := merge $c.extraEnv $dep.extraEnv $c.env }}
+            {{- range $k, $v := merge $c.extraEnv $dep.extraEnv $c.env ($ctx.Values.global.env | default dict) }}
             - name: {{ $k }}
               value: {{ $v | quote }}
             {{- end }}
@@ -113,10 +113,7 @@ spec:
               readOnly: true
             {{- end }}
             {{- end }}
-            {{- with $c.extraVolumeMounts }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
-            {{- with $dep.extraVolumeMounts }}
+            {{- with concat ($ctx.Values.global.extraVolumeMounts | default list) $c.extraVolumeMounts $dep.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
           {{- with $c.resources }}
@@ -146,7 +143,7 @@ spec:
             name: {{ $cmRname }}
         {{- end }}
         {{- end }}
-        {{- with $dep.extraVolumes }}
+        {{- with concat ($ctx.Values.global.extraVolumes | default list) $dep.extraVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
 {{- end }}

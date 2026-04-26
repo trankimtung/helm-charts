@@ -8,6 +8,24 @@ global:
   uid: 1000
   gid: 1000
 
+  # env vars injected into every container across all components (lowest priority).
+  # Per-component env, extraEnv, and container-level env/extraEnv all override these.
+  env: {}
+  # env:
+  #   TZ: UTC
+  #   LOG_LEVEL: info
+
+  # Volumes and mounts appended to every Deployment across all components.
+  # Per-deployment extraVolumes/extraVolumeMounts are appended on top of these.
+  extraVolumes: []
+  # - name: media
+  #   nfs:
+  #     server: nas.example.com
+  #     path: /media
+  extraVolumeMounts: []
+  # - name: media
+  #   mountPath: /media
+
 # Each top-level key is a component name.
 # Resources names are generated as <fullname>-<component>, e.g. myapp-backend.
 # If a component name matches the chart name, it is considered the "default" component 
