@@ -23,7 +23,7 @@ components:
 
         containers:
           navidrome:
-            image: deluan/navidrome:0.61.0@sha256:b14a6acb5cd5ee73f3a13d63d8d68ede82dedb796aa522fbada94769d990cf0b
+            image: deluan/navidrome:0.62.0@sha256:c4b5cb36a790b3eb63ca6a68bbe2fe149c2d7fa2e586f7a480e61db630e6664b
             imagePullPolicy: IfNotPresent
             args:
               - -c
