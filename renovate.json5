@@ -1,0 +1,34 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:recommended", ":semanticCommits", "docker:pinDigests"],
+
+  // The common library's placeholder example image is not a real dependency.
+  ignorePaths: ["charts/common/**"],
+
+  // Never append a digest to values in Chart.yaml (appVersion, common dep).
+  packageRules: [
+    { matchFileNames: ["charts/**/Chart.yaml"], pinDigests: false },
+  ],
+
+  // appVersion in Chart.yaml, annotated to track the app image (same depName
+  // as the image, so both update in one PR).
+  customManagers: [
+    {
+      customType: "regex",
+      managerFilePatterns: ["/charts/.+/Chart\\.yaml$/"],
+      matchStrings: [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?\\s+appVersion:\\s*[\"']?(?<currentValue>[^\"'\\s]+)",
+      ],
+      versioningTemplate: "{{#if versioning}}{{versioning}}{{else}}docker{{/if}}",
+    },
+  ],
+
+  // Bump each chart's own version: when any of its deps change.
+  bumpVersions: [
+    {
+      filePatterns: ["{{packageFileDir}}/Chart.yaml"],
+      matchStrings: ["\\nversion:\\s+(?<version>[^\\s]+)"],
+      bumpType: "{{#if isPatch}}patch{{else}}minor{{/if}}",
+    },
+  ],
+}
