@@ -4,6 +4,7 @@ description: A Helm chart for Audiobookshelf - a self-hosted audiobook and podca
 icon: https://www.audiobookshelf.org/Logo.png
 type: application
 version: 0.6.0
+# renovate: datasource=docker depName=ghcr.io/advplyr/audiobookshelf
 appVersion: 2.35.1
 keywords:
   - audiobookshelf
