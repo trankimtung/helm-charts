@@ -54,8 +54,8 @@ spec:
       containers:
         {{- range $cName, $c := $dep.containers }}
         - name: {{ $cName }}
-          image: {{ $c.image }}
-          imagePullPolicy: {{ $c.imagePullPolicy }}
+          image: {{ $c.image.repository }}:{{ $c.image.tag }}
+          imagePullPolicy: {{ $c.image.pullPolicy | default "IfNotPresent" }}
           {{- with $c.args }}
           {{- if $root.cm }}
           args:

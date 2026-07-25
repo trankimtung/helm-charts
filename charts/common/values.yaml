@@ -59,8 +59,10 @@ components:
 
         containers:
           myapp:
-            image: example/myapp:1.0.0@sha256:abc123  # Always pin to a digest.
-            imagePullPolicy: IfNotPresent
+            image:
+              repository: example/myapp
+              tag: 1.0.0@sha256:abc123  # Always pin the digest in the tag.
+              pullPolicy: IfNotPresent
 
             args: []
             # - --config=/config/app.conf
