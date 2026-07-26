@@ -8,6 +8,23 @@
   // Never append a digest to values in Chart.yaml (appVersion, common dep).
   packageRules: [
     { matchFileNames: ["charts/**/Chart.yaml"], pinDigests: false },
+
+    // Some LinuxServer.io repos carry stray semver tags that sort above the
+    // real release stream (mistagged nightly/plugins or base-OS builds). The
+    // docker datasource would otherwise pick these as "newest" and open a
+    // bogus bump (e.g. lidarr 3.1.0 -> 8.1.2135, qbittorrent 5.2.2 -> 20.04.1).
+    // Exclude the known strays so Renovate tracks the true release line; add
+    // new ones here if upstream mistags again.
+    {
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/linuxserver/lidarr"],
+      allowedVersions: "!/^8\\.1\\.2135$/",
+    },
+    {
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/linuxserver/qbittorrent"],
+      allowedVersions: "!/^(14\\.3\\.9|20\\.04\\.1)$/",
+    },
   ],
 
   // appVersion in Chart.yaml, annotated to track the app image (same depName
