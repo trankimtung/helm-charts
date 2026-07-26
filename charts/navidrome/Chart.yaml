@@ -3,9 +3,9 @@ name: navidrome
 description: A Helm chart for Navidrome - a self-hosted music server and streamer
 icon: https://raw.githubusercontent.com/navidrome/navidrome/400a079fcd54b816b4742c9a7d44eea31fcab0da/resources/logo-192x192.png
 type: application
-version: 0.4.0
+version: 0.5.0
 # renovate: datasource=docker depName=deluan/navidrome
-appVersion: 0.62.0
+appVersion: 0.63.2
 keywords:
   - navidrome
   - music
