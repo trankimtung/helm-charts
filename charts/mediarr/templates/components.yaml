@@ -1,0 +1,13 @@
+{{- include "mediarr.validate" . }}
+{{- $sa := include "mediarr.serviceAccountName" . }}
+{{- $enabled := dict }}
+{{- range $name, $comp := .Values.components }}
+{{- if ne $comp.enabled false }}
+{{- range $depName, $dep := $comp.deployments }}
+{{- $_ := set $dep "serviceAccountName" $sa }}
+{{- $_ := set $dep "automountServiceAccountToken" false }}
+{{- end }}
+{{- $_ := set $enabled $name $comp }}
+{{- end }}
+{{- end }}
+{{- include "common.components" (dict "ctx" . "components" $enabled) }}

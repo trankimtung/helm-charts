@@ -1,0 +1,508 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  uid: 1000
+  gid: 1000
+  # Injected into every container (TZ for all *arr apps).
+  env:
+    TZ: UTC
+  extraVolumes: []
+  extraVolumeMounts: []
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+components:
+  prowlarr:
+    enabled: true
+    deployments:
+      prowlarr:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes:
+          - name: run
+            emptyDir: {}
+        extraVolumeMounts: []
+        containers:
+          prowlarr:
+            image:
+              repository: ghcr.io/linuxserver/prowlarr
+              tag: 2.4.0@sha256:4fd7a166c8f46dd3370a871c250ee577d6c2ae97a0dbe0e3614b5ef736205620
+              pullPolicy: IfNotPresent
+            ports:
+              prowlarr:
+                containerPort: 9696
+                protocol: TCP
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                drop: [ALL]
+                add: [CHOWN, SETGID, SETUID]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              PROWLARR__SERVER__PORT: "9696"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: prowlarr}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: prowlarr}
+                initialDelaySeconds: 15
+                periodSeconds: 5
+            extraVolumeMounts:
+              - name: run
+                mountPath: /run
+            resources:
+              limits: {cpu: 500m, memory: 512Mi}
+              requests: {cpu: 50m, memory: 128Mi}
+    services:
+      prowlarr:
+        type: ClusterIP
+        ports:
+          - name: prowlarr
+            port: 9696
+    ingresses:
+      prowlarr:
+        enabled: false
+        className: ""
+        portName: prowlarr
+        annotations: {}
+        hosts:
+          - prowlarr.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          prowlarr: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  radarr:
+    enabled: true
+    deployments:
+      radarr:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes:
+          - name: run
+            emptyDir: {}
+        extraVolumeMounts: []
+        containers:
+          radarr:
+            image:
+              repository: ghcr.io/linuxserver/radarr
+              tag: 6.2.1@sha256:549c4a075496cf7584593bdc041407ddb38ee8958df8cf99938f8821467ea6f8
+              pullPolicy: IfNotPresent
+            ports:
+              radarr:
+                containerPort: 7878
+                protocol: TCP
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                drop: [ALL]
+                add: [CHOWN, SETGID, SETUID]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              RADARR__SERVER__PORT: "7878"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: radarr}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: radarr}
+                initialDelaySeconds: 15
+                periodSeconds: 5
+            extraVolumeMounts:
+              - name: run
+                mountPath: /run
+            resources:
+              limits: {cpu: 500m, memory: 1Gi}
+              requests: {cpu: 100m, memory: 256Mi}
+    services:
+      radarr:
+        type: ClusterIP
+        ports:
+          - name: radarr
+            port: 7878
+    ingresses:
+      radarr:
+        enabled: false
+        className: ""
+        portName: radarr
+        annotations: {}
+        hosts:
+          - radarr.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          radarr: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  sonarr:
+    enabled: true
+    deployments:
+      sonarr:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes:
+          - name: run
+            emptyDir: {}
+        extraVolumeMounts: []
+        containers:
+          sonarr:
+            image:
+              repository: ghcr.io/linuxserver/sonarr
+              tag: 4.0.19@sha256:24acea2956a0ccb11f103877d9f4f8576600fb34bff34820ed749c2256dab89f
+              pullPolicy: IfNotPresent
+            ports:
+              sonarr:
+                containerPort: 8989
+                protocol: TCP
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                drop: [ALL]
+                add: [CHOWN, SETGID, SETUID]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              SONARR__SERVER__PORT: "8989"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: sonarr}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: sonarr}
+                initialDelaySeconds: 15
+                periodSeconds: 5
+            extraVolumeMounts:
+              - name: run
+                mountPath: /run
+            resources:
+              limits: {cpu: 500m, memory: 1Gi}
+              requests: {cpu: 100m, memory: 256Mi}
+    services:
+      sonarr:
+        type: ClusterIP
+        ports:
+          - name: sonarr
+            port: 8989
+    ingresses:
+      sonarr:
+        enabled: false
+        className: ""
+        portName: sonarr
+        annotations: {}
+        hosts:
+          - sonarr.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          sonarr: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  lidarr:
+    enabled: true
+    deployments:
+      lidarr:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes:
+          - name: run
+            emptyDir: {}
+        extraVolumeMounts: []
+        containers:
+          lidarr:
+            image:
+              repository: ghcr.io/linuxserver/lidarr
+              tag: 3.1.0@sha256:f60ee67694bc4a218efe0fb2dc0b0021d193ac5f15be2638d17ab4eeb6966946
+              pullPolicy: IfNotPresent
+            ports:
+              lidarr:
+                containerPort: 8686
+                protocol: TCP
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                drop: [ALL]
+                add: [CHOWN, SETGID, SETUID]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              LIDARR__SERVER__PORT: "8686"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: lidarr}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: lidarr}
+                initialDelaySeconds: 15
+                periodSeconds: 5
+            extraVolumeMounts:
+              - name: run
+                mountPath: /run
+            resources:
+              limits: {cpu: 500m, memory: 1Gi}
+              requests: {cpu: 100m, memory: 256Mi}
+    services:
+      lidarr:
+        type: ClusterIP
+        ports:
+          - name: lidarr
+            port: 8686
+    ingresses:
+      lidarr:
+        enabled: false
+        className: ""
+        portName: lidarr
+        annotations: {}
+        hosts:
+          - lidarr.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          lidarr: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  qbittorrent:
+    enabled: true
+    deployments:
+      qbittorrent:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes:
+          - name: run
+            emptyDir: {}
+        extraVolumeMounts: []
+        containers:
+          qbittorrent:
+            image:
+              repository: ghcr.io/linuxserver/qbittorrent
+              tag: 5.2.2@sha256:dd24a5f3db32bc1425d3f8dc95e8aca8ac5a35905d798171230edf33f516d9a4
+              pullPolicy: IfNotPresent
+            ports:
+              webui: {containerPort: 8080, protocol: TCP}
+              torrent-tcp: {containerPort: 6881, protocol: TCP}
+              torrent-udp: {containerPort: 6881, protocol: UDP}
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                drop: [ALL]
+                add: [CHOWN, SETGID, SETUID]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              WEBUI_PORT: "8080"
+              TORRENTING_PORT: "6881"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: webui}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: webui}
+                initialDelaySeconds: 15
+                periodSeconds: 5
+            extraVolumeMounts:
+              - name: run
+                mountPath: /run
+            resources:
+              limits: {cpu: 1, memory: 2Gi}
+              requests: {cpu: 100m, memory: 256Mi}
+    services:
+      qbittorrent:
+        type: ClusterIP
+        ports:
+          - name: webui
+            port: 8080
+            targetPort: webui
+          - name: bittorrent-tcp
+            port: 6881
+            targetPort: torrent-tcp
+            protocol: TCP
+          - name: bittorrent-udp
+            port: 6881
+            targetPort: torrent-udp
+            protocol: UDP
+    ingresses:
+      qbittorrent:
+        enabled: false
+        className: ""
+        portName: webui
+        annotations: {}
+        hosts:
+          - qbittorrent.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          qbittorrent: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+      downloads:
+        enabled: false
+        existingClaim: ""
+        mountTo:
+          qbittorrent: /downloads
+        size: 10Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  flaresolverr:
+    enabled: true
+    deployments:
+      flaresolverr:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes: []
+        extraVolumeMounts: []
+        containers:
+          flaresolverr:
+            image:
+              repository: ghcr.io/flaresolverr/flaresolverr
+              tag: v3.5.0@sha256:139dfee1c6f89249c8d665d1333a42e8ec74ec0a86bc6bb1c8461e10d3a66a47
+              pullPolicy: IfNotPresent
+            ports:
+              flaresolverr: {containerPort: 8191, protocol: TCP}
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PORT: "8191"
+              PROMETHEUS_ENABLED: "false"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: flaresolverr}
+                initialDelaySeconds: 15
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: flaresolverr}
+                initialDelaySeconds: 10
+                periodSeconds: 5
+            extraVolumeMounts: []
+            resources:
+              limits: {cpu: 500m, memory: 512Mi}
+              requests: {cpu: 50m, memory: 128Mi}
+    services:
+      flaresolverr:
+        type: ClusterIP
+        ports:
+          - name: flaresolverr
+            port: 8191
