@@ -12,14 +12,14 @@ helm install <release-name> oci://ghcr.io/trankimtung/helm-charts/<chart-name>
 
 ## Charts
 
-| Chart                                   | Description                                                               | Version |
-| --------------------------------------- | ------------------------------------------------------------------------- | ------- |
-| [audiobookshelf](charts/audiobookshelf) | Audiobook and podcast server                                              | 0.5.0   |
-| [home-assistant](charts/home-assistant) | Home Assistant + Mosquitto + Zigbee2MQTT                                  | 0.1.0   |
-| [mediarr](charts/mediarr)               | The *arr suite (Prowlarr/Radarr/Sonarr/Lidarr/qBittorrent/FlareSolverr)   | 0.1.0   |
-| [navidrome](charts/navidrome)           | Music server and streamer                                                 | 0.3.0   |
-| [pihole](charts/pihole)                 | DNS sinkhole and ad blocker, with Unbound and optional NebulaSync support | 0.1.1   |
-| [uptime-kuma](charts/uptime-kuma)       | Monitoring tool                                                           | 0.3.0   |
+| Chart                                   | Description                                                                   |
+|-----------------------------------------|-------------------------------------------------------------------------------|
+| [audiobookshelf](charts/audiobookshelf) | Audiobook and podcast server                                                  |
+| [home-assistant](charts/home-assistant) | Home Assistant, with Mosquitto MQTT and Zigbee2MQTT                           |
+| [mediarr](charts/mediarr)               | The \*arr suite (Prowlarr, Radarr, Sonarr, Lidarr, qBittorrent, FlareSolverr) |
+| [navidrome](charts/navidrome)           | Music server and streamer                                                     |
+| [pihole](charts/pihole)                 | DNS sinkhole and ad blocker, with Unbound and optional NebulaSync             |
+| [uptime-kuma](charts/uptime-kuma)       | Self-hosted uptime monitoring                                                 |
 
 ## License
 
