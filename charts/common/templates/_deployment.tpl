@@ -85,17 +85,19 @@ spec:
             runAsUser: {{ $c.uid | default $ctx.Values.global.uid }}
             runAsGroup: {{ $c.gid | default $ctx.Values.global.gid }}
           {{- end }}
-          {{- with $c.probes.startup }}
+          {{- with $c.probes }}
+          {{- with .startup }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $c.probes.liveness }}
+          {{- with .liveness }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $c.probes.readiness }}
+          {{- with .readiness }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- end }}
           volumeMounts:
             {{- range $pvcName, $pvc := $root.persistence }}
