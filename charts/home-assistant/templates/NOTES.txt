@@ -1,0 +1,46 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Release Name: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+━━━ Home Assistant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{{- if .Values.homeAssistant.ingress.enabled }}
+  {{- range .Values.homeAssistant.ingress.hosts }}
+  https://{{ . }}
+  {{- end }}
+{{- else }}
+  Not exposed via ingress. Port-forward to access:
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "home-assistant.fullname" . }} 8123:8123
+  Then open http://localhost:8123
+{{- end }}
+
+{{- if or .Values.mqtt.enabled .Values.zigbee2mqtt.enabled }}
+
+━━━ MQTT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {{- if .Values.mqtt.enabled }}
+  Mosquitto:   {{ include "home-assistant.fullname" . }}-mqtt:{{ .Values.mqtt.port }}
+  {{- end }}
+  {{- if .Values.zigbee2mqtt.enabled }}
+  {{- if .Values.zigbee2mqtt.ingress.enabled }}
+  Zigbee2MQTT:
+    {{- range .Values.zigbee2mqtt.ingress.hosts }}
+    https://{{ . }}
+    {{- end }}
+  {{- else }}
+  Zigbee2MQTT: {{ include "home-assistant.fullname" . }}-mqtt:{{ .Values.zigbee2mqtt.port }} (ClusterIP only)
+  {{- end }}
+  {{- end }}
+{{- end }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+To check status:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+To view logs:
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }} -c home-assistant
+  {{- if .Values.mqtt.enabled }}
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=mqtt -c mqtt
+  {{- end }}
+  {{- if .Values.zigbee2mqtt.enabled }}
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/component=mqtt -c zigbee2mqtt
+  {{- end }}

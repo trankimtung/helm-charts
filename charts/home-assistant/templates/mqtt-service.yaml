@@ -1,0 +1,26 @@
+{{- if or .Values.mqtt.enabled .Values.zigbee2mqtt.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-mqtt
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mqtt
+spec:
+  type: ClusterIP
+  ports:
+    {{- if .Values.mqtt.enabled }}
+    - name: mqtt
+      port: {{ .Values.mqtt.port }}
+      targetPort: mqtt
+      protocol: TCP
+    {{- end }}
+    {{- if .Values.zigbee2mqtt.enabled }}
+    - name: zigbee2mqtt
+      port: {{ .Values.zigbee2mqtt.port }}
+      targetPort: zigbee2mqtt
+      protocol: TCP
+    {{- end }}
+  selector:
+    {{- include "home-assistant.mqttSelectorLabels" . | nindent 4 }}
+{{- end }}

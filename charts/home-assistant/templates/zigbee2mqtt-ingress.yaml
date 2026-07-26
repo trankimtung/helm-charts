@@ -1,0 +1,39 @@
+{{- if and .Values.zigbee2mqtt.enabled .Values.zigbee2mqtt.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-zigbee2mqtt
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mqtt
+    {{- with .Values.zigbee2mqtt.ingress.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.zigbee2mqtt.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.zigbee2mqtt.ingress.className }}
+  ingressClassName: {{ .Values.zigbee2mqtt.ingress.className }}
+  {{- end }}
+  tls:
+    - hosts:
+        {{- range .Values.zigbee2mqtt.ingress.hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ include "home-assistant.fullname" . }}-zigbee2mqtt-tls
+  rules:
+    {{- range .Values.zigbee2mqtt.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: {{ $.Values.zigbee2mqtt.ingress.path }}
+            pathType: {{ $.Values.zigbee2mqtt.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "home-assistant.fullname" $ }}-mqtt
+                port:
+                  name: zigbee2mqtt
+    {{- end }}
+{{- end }}

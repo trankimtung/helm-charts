@@ -1,0 +1,25 @@
+{{- if .Values.homeAssistant.callbackService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-callback
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+    {{- with .Values.homeAssistant.callbackService.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.homeAssistant.callbackService.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.homeAssistant.callbackService.type }}
+  ports:
+    - name: sonos
+      port: {{ .Values.homeAssistant.callbackService.sonosPort }}
+      targetPort: sonos
+      protocol: TCP
+  selector:
+    {{- include "home-assistant.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: home-assistant
+{{- end }}

@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "home-assistant.fullname" . }}
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+    app.kubernetes.io/component: home-assistant
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "home-assistant.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "home-assistant.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: home-assistant
+    spec:
+      initContainers:
+        - name: ensure-config-files
+          image: "{{ .Values.homeAssistant.initContainer.image.repository }}:{{ .Values.homeAssistant.initContainer.image.tag }}"
+          imagePullPolicy: {{ .Values.homeAssistant.initContainer.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              touch /config/automations.yaml
+              touch /config/scripts.yaml
+              touch /config/scenes.yaml
+          volumeMounts:
+            - name: ha-config
+              mountPath: /config
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+      containers:
+        - name: home-assistant
+          image: "{{ .Values.homeAssistant.image.repository }}:{{ .Values.homeAssistant.image.tag }}"
+          imagePullPolicy: {{ .Values.homeAssistant.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8123
+              protocol: TCP
+            - name: sonos
+              containerPort: 1400
+              protocol: TCP
+          env:
+            - name: TZ
+              value: {{ .Values.global.timezone | quote }}
+          volumeMounts:
+            - name: ha-config
+              mountPath: /config
+            - name: ha-default-config
+              mountPath: /config/configuration.yaml
+              subPath: configuration.yaml
+          resources:
+            {{- toYaml .Values.homeAssistant.resources | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+      volumes:
+        - name: ha-config
+          persistentVolumeClaim:
+            claimName: {{ include "home-assistant.fullname" . }}-ha-config
+        - name: ha-default-config
+          configMap:
+            name: {{ include "home-assistant.fullname" . }}-ha-default-config

@@ -1,0 +1,115 @@
+{{- if or .Values.mqtt.enabled .Values.zigbee2mqtt.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-mqtt
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mqtt
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "home-assistant.mqttSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "home-assistant.mqttSelectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.zigbee2mqtt.enabled }}
+      initContainers:
+        - name: zigbee2mqtt-init
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -f /app/data/configuration.yaml ]; then
+                cp /default-config/configuration.yaml /app/data/configuration.yaml
+              fi
+          volumeMounts:
+            - name: zigbee2mqtt-default-config
+              mountPath: /default-config
+            - name: zigbee2mqtt-data
+              mountPath: /app/data
+      {{- end }}
+      containers:
+        {{- if .Values.mqtt.enabled }}
+        - name: mqtt
+          image: "{{ .Values.mqtt.image.repository }}:{{ .Values.mqtt.image.tag }}"
+          imagePullPolicy: {{ .Values.mqtt.image.pullPolicy }}
+          ports:
+            - name: mqtt
+              containerPort: {{ .Values.mqtt.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: mqtt-default-config
+              mountPath: /mosquitto/config/mosquitto.conf
+              subPath: mosquitto.conf
+            {{- if .Values.mqtt.persistence.enabled }}
+            - name: mqtt-data
+              mountPath: /mosquitto/data
+            {{- end }}
+          resources:
+            {{- toYaml .Values.mqtt.resources | nindent 12 }}
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+        {{- end }}
+
+        {{- if .Values.zigbee2mqtt.enabled }}
+        - name: zigbee2mqtt
+          image: "{{ .Values.zigbee2mqtt.image.repository }}:{{ .Values.zigbee2mqtt.image.tag }}"
+          imagePullPolicy: {{ .Values.zigbee2mqtt.image.pullPolicy }}
+          ports:
+            - name: zigbee2mqtt
+              containerPort: {{ .Values.zigbee2mqtt.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: zigbee2mqtt-data
+              mountPath: /app/data
+            {{- if .Values.zigbee2mqtt.adapter.hostPath }}
+            - name: zigbee2mqtt-adapter
+              mountPath: {{ .Values.zigbee2mqtt.adapter.hostPath }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.zigbee2mqtt.resources | nindent 12 }}
+          securityContext:
+            {{- if .Values.zigbee2mqtt.adapter.hostPath }}
+            privileged: true
+            {{- end }}
+            seccompProfile:
+              type: RuntimeDefault
+        {{- end }}
+
+      volumes:
+        {{- if .Values.mqtt.enabled }}
+        - name: mqtt-default-config
+          configMap:
+            name: {{ include "home-assistant.fullname" . }}-mqtt-default-config
+        {{- if .Values.mqtt.persistence.enabled }}
+        - name: mqtt-data
+          persistentVolumeClaim:
+            claimName: {{ include "home-assistant.fullname" . }}-mqtt-data
+        {{- end }}
+        {{- end }}
+        {{- if .Values.zigbee2mqtt.enabled }}
+        - name: zigbee2mqtt-default-config
+          configMap:
+            name: {{ include "home-assistant.fullname" . }}-zigbee2mqtt-default-config
+        - name: zigbee2mqtt-data
+          {{- if .Values.zigbee2mqtt.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "home-assistant.fullname" . }}-zigbee2mqtt-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        {{- if .Values.zigbee2mqtt.adapter.hostPath }}
+        - name: zigbee2mqtt-adapter
+          hostPath:
+            path: {{ .Values.zigbee2mqtt.adapter.hostPath }}
+        {{- end }}
+        {{- end }}
+{{- end }}

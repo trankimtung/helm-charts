@@ -1,0 +1,11 @@
+{{- if .Values.mqtt.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-mqtt-default-config
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+data:
+  mosquitto.conf: |
+    {{- .Values.mqtt.defaultConfig | nindent 4 }}
+{{- end }}

@@ -1,0 +1,17 @@
+{{- if and .Values.mqtt.enabled .Values.mqtt.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-mqtt-data
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.mqtt.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.mqtt.persistence.size }}
+  {{- if .Values.mqtt.persistence.storageClass }}
+  storageClassName: {{ .Values.mqtt.persistence.storageClass }}
+  {{- end }}
+{{- end }}

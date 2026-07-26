@@ -1,0 +1,141 @@
+global:
+  timezone: UTC
+
+homeAssistant:
+  image:
+    repository: ghcr.io/home-assistant/home-assistant
+    tag: "2026.7.4@sha256:5a531753cea96444200158fc2b0ac7ccd739291ec50414877b396de6e0bb29b3"
+    pullPolicy: IfNotPresent
+
+  initContainer:
+    image:
+      repository: busybox
+      tag: "1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d"
+      pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    extraLabels: {}
+
+  callbackService:
+    enabled: false
+    type: LoadBalancer
+    extraLabels: {}
+    annotations: {}
+    sonosPort: 1400
+
+  ingress:
+    enabled: false
+    className: ""
+    extraLabels: {}
+    annotations: {}
+    hosts:
+      - home-assistant.example.com
+    path: /
+    pathType: Prefix
+    servicePort: http
+
+  resources:
+    limits:
+      cpu: 1
+      memory: 2048Mi
+    requests:
+      cpu: 200m
+      memory: 1024Mi
+
+  persistence:
+    config:
+      size: 5Gi
+      accessMode: ReadWriteOnce
+      # storageClass: ""
+
+  # Default configuration mounted at /config/configuration.yaml
+  defaultConfig: |
+    # Loads default set of integrations. Do not remove.
+    default_config:
+
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    scene: !include scenes.yaml
+
+    # HTTP integration configuration for reverse proxy support
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        - 192.168.0.0/16
+
+# Zigbee2MQTT bridge
+zigbee2mqtt:
+  enabled: false
+  image:
+    repository: koenkk/zigbee2mqtt
+    tag: "2.12.1@sha256:80f7f04f72a99e4c4ef51ef7e98ee736edba6db0ecbb7abc626d0c4b0f1871f1"
+    pullPolicy: IfNotPresent
+  port: 8080
+  # Host path to the Zigbee adapter device (e.g. /dev/ttyACM0, /dev/ttyUSB0)
+  # Leave empty if using a network adapter (e.g. ser2net)
+  adapter:
+    hostPath: ""
+  defaultConfig: |
+    homeassistant: true
+    permit_join: false
+    mqtt:
+      server: mqtt://localhost:1883
+    serial:
+      adapter: ember
+      port: tcp://10.0.2.10:6638
+      baudrate: 115200
+      rtscts: false
+    frontend:
+      port: 8080
+    advanced:
+      log_output:
+        - console
+  ingress:
+    enabled: false
+    className: ""
+    extraLabels: {}
+    annotations: {}
+    hosts:
+      - zigbee2mqtt.example.com
+    path: /
+    pathType: Prefix
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  persistence:
+    enabled: false
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    # storageClass: ""
+
+# Mosquitto MQTT broker
+mqtt:
+  enabled: false
+  image:
+    repository: eclipse-mosquitto
+    tag: "2.1.2-alpine@sha256:6f8d8a947c506f8a2290ec65cd4bd2bc7cb4d43fb5f6271f861cb013e2ef9797"
+    pullPolicy: IfNotPresent
+  port: 1883
+  defaultConfig: |
+    listener 1883
+    allow_anonymous true
+    persistence true
+    persistence_location /mosquitto/data/
+    log_dest stdout
+  resources:
+    limits:
+      cpu: 100m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  persistence:
+    enabled: false
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    # storageClass: ""

@@ -1,0 +1,11 @@
+{{- if .Values.zigbee2mqtt.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "home-assistant.fullname" . }}-zigbee2mqtt-default-config
+  labels:
+    {{- include "home-assistant.labels" . | nindent 4 }}
+data:
+  configuration.yaml: |
+    {{- .Values.zigbee2mqtt.defaultConfig | nindent 4 }}
+{{- end }}
