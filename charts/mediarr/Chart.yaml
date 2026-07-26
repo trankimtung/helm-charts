@@ -2,7 +2,7 @@ apiVersion: v2
 name: mediarr
 description: A Helm chart for the *arr suite (Prowlarr, Radarr, Sonarr, Lidarr, qBittorrent, FlareSolverr).
 type: application
-version: 0.2.0
+version: 0.3.0
 keywords:
   - mediarr
   - servarr
