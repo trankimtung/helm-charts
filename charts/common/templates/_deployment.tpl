@@ -43,6 +43,12 @@ spec:
       labels:
         {{- .selectorLabels | nindent 8 }}
     spec:
+      {{- with $dep.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+      {{- if hasKey $dep "automountServiceAccountToken" }}
+      automountServiceAccountToken: {{ $dep.automountServiceAccountToken }}
+      {{- end }}
       securityContext:
         runAsUser: {{ $ctx.Values.global.uid }}
         runAsGroup: {{ $ctx.Values.global.gid }}

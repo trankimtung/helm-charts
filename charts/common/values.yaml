@@ -40,6 +40,9 @@ components:
         strategy:
           type: Recreate  # Use Recreate when volumes are ReadWriteOnce.
 
+        # serviceAccountName: ""          # optional; pod's ServiceAccount (create the SA in your chart).
+        # automountServiceAccountToken: false  # optional; set false to drop the SA token mount.
+
         initContainers: []
         # - name: init
         #   image: busybox:latest
