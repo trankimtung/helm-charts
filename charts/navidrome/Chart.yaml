@@ -14,5 +14,5 @@ maintainers:
   - name: trankimtung
 dependencies:
   - name: common
-    version: "0.4.0"
+    version: "0.4.1"
     repository: "oci://ghcr.io/trankimtung/helm-charts"
