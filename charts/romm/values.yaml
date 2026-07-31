@@ -1,0 +1,224 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  uid: 1000
+  gid: 1000
+
+components:
+  romm:
+    deployments:
+      romm:
+        replicas: 1
+        strategy:
+          type: Recreate
+
+        initContainers: []
+
+        # Extra env vars injected into all containers. ref: https://docs.romm.app/latest/reference/environment-variables/
+        extraEnv: {}
+        envFrom: []
+
+        extraVolumes: []
+        extraVolumeMounts: []
+
+        containers:
+          romm:
+            image:
+              repository: ghcr.io/rommapp/romm
+              tag: 5.1.0@sha256:ce9d86ab531e09fede45d00f426e3bf2d1f5dd14846f94d6360d77a92a413028
+              pullPolicy: IfNotPresent
+
+            ports:
+              romm:
+                containerPort: 8080
+                protocol: TCP
+
+            uid: ""  # Defaults to global.uid.
+            gid: ""  # Defaults to global.gid.
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            # A database is required: set ROMM_DB_DRIVER (mariadb, mysql or
+            # postgresql) plus DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWD (or
+            # *_FILE) via extraEnv/envFrom. ROMM_AUTH_SECRET_KEY (or *_FILE,
+            # `openssl rand -hex 32`) must be set and persisted or all sessions
+            # are invalidated on every restart.
+            # Setting REDIS_HOST disables the image's bundled valkey-server.
+            env:
+              ROMM_PORT: "8080"
+              REDIS_HOST: romm-redis
+              REDIS_PORT: "6379"
+              # Keyless metadata provider, enabled in the upstream compose example.
+              HASHEOUS_API_ENABLED: "true"
+
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              startup:
+                httpGet:
+                  path: /api/heartbeat
+                  port: romm
+                failureThreshold: 60
+                periodSeconds: 5
+
+              liveness:
+                httpGet:
+                  path: /api/heartbeat
+                  port: romm
+                periodSeconds: 10
+
+              readiness:
+                httpGet:
+                  path: /api/heartbeat
+                  port: romm
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: "2"
+                memory: 2Gi
+              requests:
+                cpu: 100m
+                memory: 512Mi
+
+    services:
+      romm:
+        type: ClusterIP
+        ports:
+          - name: romm
+            port: 8080
+
+    ingresses:
+      romm:
+        enabled: false
+        className: ""
+        portName: romm
+        hosts:
+          - romm.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""  # Defaults to <fullname>-tls.
+
+    persistence:
+      library:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          romm: /romm/library
+        size: 10Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""  # Leave empty for the cluster default StorageClass.
+      resources:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          romm: /romm/resources
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+      assets:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          romm: /romm/assets
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+      config:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          romm: /romm/config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  redis:
+    deployments:
+      redis:
+        replicas: 1
+        strategy:
+          type: Recreate
+
+        initContainers: []
+
+        extraEnv: {}
+        envFrom: []
+
+        extraVolumes: []
+        extraVolumeMounts: []
+
+        containers:
+          redis:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.1-trixie@sha256:3acc0687f2a2e1091fae6450d7842dd658c941338cf0a873ddd9e14b9e4ea4dd
+              pullPolicy: IfNotPresent
+
+            ports:
+              redis:
+                containerPort: 6379
+                protocol: TCP
+
+            uid: ""
+            gid: ""
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            env: {}
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              liveness:
+                tcpSocket:
+                  port: redis
+                periodSeconds: 10
+              readiness:
+                tcpSocket:
+                  port: redis
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: 250m
+                memory: 256Mi
+              requests:
+                cpu: 50m
+                memory: 64Mi
+
+    services:
+      redis:
+        type: ClusterIP
+        ports:
+          - name: redis
+            port: 6379

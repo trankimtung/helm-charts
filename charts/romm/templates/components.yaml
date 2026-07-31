@@ -1,0 +1,2 @@
+{{- include "romm.validate" . }}
+{{- include "common.components" (dict "ctx" . "components" .Values.components) }}

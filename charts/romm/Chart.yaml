@@ -1,0 +1,18 @@
+apiVersion: v2
+name: romm
+description: A Helm chart for RomM - a self-hosted ROM manager and browser-based game library
+type: application
+version: 0.1.0
+# renovate: datasource=docker depName=ghcr.io/rommapp/romm
+appVersion: 5.1.0
+keywords:
+  - romm
+  - roms
+  - retro-gaming
+  - emulation
+maintainers:
+  - name: trankimtung
+dependencies:
+  - name: common
+    version: 0.4.0
+    repository: oci://ghcr.io/trankimtung/helm-charts

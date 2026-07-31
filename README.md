@@ -20,6 +20,7 @@ helm install <release-name> oci://ghcr.io/trankimtung/helm-charts/<chart-name>
 | [navidrome](charts/navidrome)           | Music server and streamer                                                     |
 | [paperless-ngx](charts/paperless-ngx)   | Document management system, with Valkey                                      |
 | [pihole](charts/pihole)                 | DNS sinkhole and ad blocker, with Unbound and optional NebulaSync             |
+| [romm](charts/romm)                     | ROM manager and browser-based game library                                   |
 | [uptime-kuma](charts/uptime-kuma)       | Self-hosted uptime monitoring                                                 |
 
 ## License
