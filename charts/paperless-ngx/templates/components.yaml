@@ -1,2 +1,8 @@
 {{- include "paperless-ngx.validate" . }}
-{{- include "common.components" (dict "ctx" . "components" .Values.components) }}
+{{- $enabled := dict }}
+{{- range $name, $comp := .Values.components }}
+{{- if ne $comp.enabled false }}
+{{- $_ := set $enabled $name $comp }}
+{{- end }}
+{{- end }}
+{{- include "common.components" (dict "ctx" . "components" $enabled) }}
