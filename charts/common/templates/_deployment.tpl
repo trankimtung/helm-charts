@@ -63,10 +63,8 @@ spec:
           image: {{ $c.image.repository }}:{{ $c.image.tag }}
           imagePullPolicy: {{ $c.image.pullPolicy | default "IfNotPresent" }}
           {{- with $c.args }}
-          {{- if $root.cm }}
           args:
             {{- toYaml . | nindent 12 }}
-          {{- end }}
           {{- end }}
           env:
             {{- range $k, $v := merge $c.extraEnv $dep.extraEnv $c.env ($ctx.Values.global.env | default dict) }}
