@@ -34,7 +34,10 @@ jobs:
       - name: Package and push charts
         run: |
           mkdir -p /tmp/helm-packages
-          for chart in charts/*/; do
+          # Package and push one chart at a time, the common library first,
+          # so charts depending on a common version released in the same
+          # push can resolve it from the registry.
+          for chart in charts/common/ $(ls -d charts/*/ | grep -v '^charts/common/$'); do
             name=$(basename "$chart")
             version=$(grep '^version:' "$chart/Chart.yaml" | awk '{print $2}')
             if helm show chart "oci://ghcr.io/${{ github.repository_owner }}/helm-charts/$name" --version "$version" > /dev/null 2>&1; then
@@ -43,13 +46,5 @@ jobs:
             fi
             helm dependency update "$chart"
             helm package "$chart" --destination /tmp/helm-packages
-          done
-          shopt -s nullglob
-          pkgs=(/tmp/helm-packages/*.tgz)
-          if [ ${#pkgs[@]} -eq 0 ]; then
-            echo "No new charts to push."
-            exit 0
-          fi
-          for pkg in "${pkgs[@]}"; do
-            helm push "$pkg" oci://ghcr.io/${{ github.repository_owner }}/helm-charts
+            helm push "/tmp/helm-packages/$name-$version.tgz" oci://ghcr.io/${{ github.repository_owner }}/helm-charts
           done
