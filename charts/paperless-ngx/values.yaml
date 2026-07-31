@@ -1,0 +1,217 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  uid: 1000
+  gid: 1000
+
+components:
+  paperless-ngx:
+    deployments:
+      paperless-ngx:
+        replicas: 1
+        strategy:
+          type: Recreate
+
+        initContainers: []
+
+        # Extra env vars injected into all containers. ref: https://docs.paperless-ngx.com/configuration/
+        extraEnv: {}
+        envFrom: []
+
+        extraVolumes: []
+        extraVolumeMounts: []
+
+        containers:
+          paperless-ngx:
+            image:
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 3.0.4@sha256:3838b9a4260d23acc5bb63aed407138435e70b56e5806f4baa350ca184e57582
+              pullPolicy: IfNotPresent
+
+            ports:
+              paperless:
+                containerPort: 8000
+                protocol: TCP
+
+            uid: ""  # Defaults to global.uid.
+            gid: ""  # Defaults to global.gid.
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            # Defaults to SQLite on the data volume. For PostgreSQL set
+            # PAPERLESS_DBENGINE=postgresql (required since 3.0) plus
+            # PAPERLESS_DBHOST/DBNAME/DBUSER/DBPASS (or *_FILE) via extraEnv/envFrom.
+            # PAPERLESS_SECRET_KEY (or *_FILE) is required since 3.0.
+            env:
+              PAPERLESS_PORT: "8000"
+              PAPERLESS_REDIS: redis://paperless-ngx-redis:6379
+
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              startup:
+                httpGet:
+                  path: /
+                  port: paperless
+                failureThreshold: 60
+                periodSeconds: 5
+
+              liveness:
+                httpGet:
+                  path: /
+                  port: paperless
+                periodSeconds: 10
+
+              readiness:
+                httpGet:
+                  path: /
+                  port: paperless
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: "2"
+                memory: 2Gi
+              requests:
+                cpu: 100m
+                memory: 512Mi
+
+    services:
+      paperless-ngx:
+        type: ClusterIP
+        ports:
+          - name: paperless
+            port: 8000
+
+    ingresses:
+      paperless-ngx:
+        enabled: false
+        className: ""
+        portName: paperless
+        hosts:
+          - paperless.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""  # Defaults to <fullname>-tls.
+
+    persistence:
+      data:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          paperless-ngx: /usr/src/paperless/data
+        size: 2Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""  # Leave empty for the cluster default StorageClass.
+      media:
+        # Disable to use emptyDir (data lost on pod deletion).
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          paperless-ngx: /usr/src/paperless/media
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""  # Leave empty for the cluster default StorageClass.
+      export:
+        enabled: false
+        existingClaim: ""
+        mountTo:
+          paperless-ngx: /usr/src/paperless/export
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+      consume:
+        enabled: false
+        existingClaim: ""
+        mountTo:
+          paperless-ngx: /usr/src/paperless/consume
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
+  redis:
+    deployments:
+      redis:
+        replicas: 1
+        strategy:
+          type: Recreate
+
+        initContainers: []
+
+        extraEnv: {}
+        envFrom: []
+
+        extraVolumes: []
+        extraVolumeMounts: []
+
+        containers:
+          redis:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.1-trixie@sha256:3acc0687f2a2e1091fae6450d7842dd658c941338cf0a873ddd9e14b9e4ea4dd
+              pullPolicy: IfNotPresent
+
+            ports:
+              redis:
+                containerPort: 6379
+                protocol: TCP
+
+            uid: ""
+            gid: ""
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            env: {}
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              liveness:
+                tcpSocket:
+                  port: redis
+                periodSeconds: 10
+              readiness:
+                tcpSocket:
+                  port: redis
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: 250m
+                memory: 256Mi
+              requests:
+                cpu: 50m
+                memory: 64Mi
+
+    services:
+      redis:
+        type: ClusterIP
+        ports:
+          - name: redis
+            port: 6379

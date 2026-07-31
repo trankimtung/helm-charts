@@ -1,0 +1,19 @@
+apiVersion: v2
+name: paperless-ngx
+description: A Helm chart for Paperless-ngx - a document management system that transforms your physical documents into a searchable online archive
+type: application
+version: 0.1.0
+# renovate: datasource=docker depName=ghcr.io/paperless-ngx/paperless-ngx
+appVersion: 3.0.4
+keywords:
+  - paperless-ngx
+  - paperless
+  - dms
+  - documents
+  - ocr
+maintainers:
+  - name: trankimtung
+dependencies:
+  - name: common
+    version: 0.4.0
+    repository: oci://ghcr.io/trankimtung/helm-charts

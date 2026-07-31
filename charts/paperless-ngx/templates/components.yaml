@@ -1,0 +1,2 @@
+{{- include "paperless-ngx.validate" . }}
+{{- include "common.components" (dict "ctx" . "components" .Values.components) }}
