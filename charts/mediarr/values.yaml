@@ -352,6 +352,89 @@ components:
         accessMode: ReadWriteOnce
         storageClass: ""
 
+  bazarr:
+    enabled: true
+    deployments:
+      bazarr:
+        replicas: 1
+        strategy:
+          type: Recreate
+        initContainers: []
+        extraEnv: {}
+        envFrom: []
+        extraVolumes:
+          - name: run
+            emptyDir: {}
+        extraVolumeMounts: []
+        containers:
+          bazarr:
+            image:
+              repository: ghcr.io/linuxserver/bazarr
+              tag: 1.6.0@sha256:ab401a0f361cfad328e444838b13d5b334b189d0f556fc91a3623eb581df36df
+              pullPolicy: IfNotPresent
+            ports:
+              bazarr:
+                containerPort: 6767
+                protocol: TCP
+            uid: ""
+            gid: ""
+            securityContext:
+              allowPrivilegeEscalation: true
+              capabilities:
+                drop: [ALL]
+                add: [CHOWN, SETGID, SETUID]
+              seccompProfile:
+                type: RuntimeDefault
+            env:
+              PUID: "1000"
+              PGID: "1000"
+            extraEnv: {}
+            envFrom: []
+            probes:
+              liveness:
+                httpGet: {path: /, port: bazarr}
+                initialDelaySeconds: 30
+                periodSeconds: 10
+              readiness:
+                httpGet: {path: /, port: bazarr}
+                initialDelaySeconds: 15
+                periodSeconds: 5
+            extraVolumeMounts:
+              - name: run
+                mountPath: /run
+            resources:
+              limits: {cpu: 500m, memory: 1Gi}
+              requests: {cpu: 100m, memory: 256Mi}
+    services:
+      bazarr:
+        type: ClusterIP
+        ports:
+          - name: bazarr
+            port: 6767
+    ingresses:
+      bazarr:
+        enabled: false
+        className: ""
+        portName: bazarr
+        annotations: {}
+        hosts:
+          - bazarr.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ""
+        mountTo:
+          bazarr: /config
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
+
   qbittorrent:
     enabled: true
     deployments:

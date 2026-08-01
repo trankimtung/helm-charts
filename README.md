@@ -16,7 +16,7 @@ helm install <release-name> oci://ghcr.io/trankimtung/helm-charts/<chart-name>
 |-----------------------------------------|-------------------------------------------------------------------------------|
 | [audiobookshelf](charts/audiobookshelf) | Audiobook and podcast server                                                  |
 | [home-assistant](charts/home-assistant) | Home Assistant, with Mosquitto MQTT and Zigbee2MQTT                           |
-| [mediarr](charts/mediarr)               | The \*arr suite (Prowlarr, Radarr, Sonarr, Lidarr, qBittorrent, FlareSolverr) |
+| [mediarr](charts/mediarr)               | The \*arr suite (Prowlarr, Radarr, Sonarr, Lidarr, Bazarr, qBittorrent, FlareSolverr) |
 | [navidrome](charts/navidrome)           | Music server and streamer                                                     |
 | [paperless-ngx](charts/paperless-ngx)   | Document management system, with Valkey                                      |
 | [pihole](charts/pihole)                 | DNS sinkhole and ad blocker, with Unbound and optional NebulaSync             |
