@@ -3,9 +3,9 @@ name: uptime-kuma
 description: A Helm chart for Uptime Kuma - a self-hosted monitoring tool
 icon: https://raw.githubusercontent.com/louislam/uptime-kuma/master/public/icon.png
 type: application
-version: 0.6.1
+version: 0.7.0
 # renovate: datasource=docker depName=ghcr.io/louislam/uptime-kuma
-appVersion: 2.4.0-rootless
+appVersion: 2.5.3-rootless
 keywords:
   - uptime-kuma
   - monitoring
