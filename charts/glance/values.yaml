@@ -1,0 +1,121 @@
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  uid: 1000
+  gid: 1000
+
+components:
+  glance:
+    # Dashboard configuration. ref: https://github.com/glanceapp/glance/blob/main/docs/configuration.md
+    # Glance watches the file and reloads on change; no pod restart needed.
+    cm:
+      config:
+        mountTo:
+          glance: /app/config
+        data:
+          glance.yml: |
+            pages:
+              - name: Home
+                columns:
+                  - size: full
+                    widgets:
+                      - type: bookmarks
+                        groups:
+                          - links:
+                              - title: Glance documentation
+                                url: https://github.com/glanceapp/glance/blob/main/docs/configuration.md
+
+    deployments:
+      glance:
+        replicas: 1
+        strategy:
+          type: RollingUpdate
+
+        initContainers: []
+
+        extraEnv: {}
+        envFrom: []
+
+        extraVolumes: []
+        extraVolumeMounts: []
+
+        containers:
+          glance:
+            image:
+              repository: glanceapp/glance
+              tag: v0.8.5@sha256:32ab73d80f2b8b5fb0735b0431deb36b93fbb6b2fb43592449b0178c8b83e350
+              pullPolicy: IfNotPresent
+
+            ports:
+              glance:
+                containerPort: 8080
+                protocol: TCP
+
+            uid: ""  # Defaults to global.uid.
+            gid: ""  # Defaults to global.gid.
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              runAsNonRoot: true
+              seccompProfile:
+                type: RuntimeDefault
+
+            env: {}
+
+            extraEnv: {}
+            envFrom: []
+
+            probes:
+              startup:
+                httpGet:
+                  path: /
+                  port: glance
+                failureThreshold: 30
+                periodSeconds: 2
+
+              liveness:
+                httpGet:
+                  path: /
+                  port: glance
+                periodSeconds: 10
+
+              readiness:
+                httpGet:
+                  path: /
+                  port: glance
+                periodSeconds: 10
+
+            extraVolumeMounts: []
+
+            resources:
+              limits:
+                cpu: 200m
+                memory: 256Mi
+              requests:
+                cpu: 25m
+                memory: 64Mi
+
+    services:
+      glance:
+        type: ClusterIP
+        ports:
+          - name: glance
+            port: 8080
+
+    ingresses:
+      glance:
+        enabled: false
+        className: ""
+        portName: glance
+        hosts:
+          - glance.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+        tls:
+          enabled: false
+          secretName: ""  # Defaults to <fullname>-tls.
