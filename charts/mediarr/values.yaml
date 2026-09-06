@@ -453,7 +453,7 @@ components:
           qbittorrent:
             image:
               repository: ghcr.io/linuxserver/qbittorrent
-              tag: 5.2.3@sha256:b024436f8ca665d16d9a997d26fd27fdf867ee5566ba09f32764e7b2976d3e02
+              tag: 5.2.3@sha256:8d48fa8c619caadfb103f04efea8747e2a2762d6c7551690919cffb987e61cee
               pullPolicy: IfNotPresent
             ports:
               webui: {containerPort: 8080, protocol: TCP}
