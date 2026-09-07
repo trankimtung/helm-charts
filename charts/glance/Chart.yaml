@@ -3,9 +3,9 @@ name: glance
 description: A Helm chart for Glance - a self-hosted dashboard that puts all your feeds in one place
 icon: https://raw.githubusercontent.com/glanceapp/glance/main/internal/glance/static/app-icon.png
 type: application
-version: 0.1.0
+version: 0.1.1
 # renovate: datasource=docker depName=glanceapp/glance
-appVersion: v0.8.5
+appVersion: v0.8.6
 keywords:
   - glance
   - dashboard
