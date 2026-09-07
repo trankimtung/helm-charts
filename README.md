@@ -21,6 +21,7 @@ helm install <release-name> oci://ghcr.io/trankimtung/helm-charts/<chart-name>
 | [paperless-ngx](charts/paperless-ngx)   | Document management system, with Valkey                                      |
 | [pihole](charts/pihole)                 | DNS sinkhole and ad blocker, with Unbound and optional NebulaSync             |
 | [romm](charts/romm)                     | ROM manager and browser-based game library                                   |
+| [searxng](charts/searxng)               | Privacy-respecting metasearch engine                                          |
 | [uptime-kuma](charts/uptime-kuma)       | Self-hosted uptime monitoring                                                 |
 
 ## License

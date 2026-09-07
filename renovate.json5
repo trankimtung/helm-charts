@@ -34,6 +34,17 @@
       matchPackageNames: ["ghcr.io/linuxserver/qbittorrent"],
       allowedVersions: "!/^(14\\.3\\.9|20\\.04\\.1)$/",
     },
+
+    // SearXNG tags are <date>-<git-sha>. Under docker versioning the suffix
+    // after the first "-" must stay equal to be "compatible", so no newer
+    // SearXNG tag would ever be offered. Parse the date as semver and treat
+    // the sha as build metadata instead. Applies to both the values.yaml image
+    // and the annotated appVersion in Chart.yaml (same depName).
+    {
+      matchDatasources: ["docker"],
+      matchPackageNames: ["searxng/searxng"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<build>[0-9a-f]+)$",
+    },
   ],
 
   // appVersion in Chart.yaml, annotated to track the app image (same depName
