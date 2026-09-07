@@ -9,6 +9,15 @@
   packageRules: [
     { matchFileNames: ["charts/**/Chart.yaml"], pinDigests: false },
 
+    // LinuxServer.io rebuilds all images weekly on the same tag, so their
+    // digest-only updates are frequent and low-risk individually; collapse
+    // them into one grouped PR. Other images keep individual digest PRs.
+    {
+      matchUpdateTypes: ["digest"],
+      matchPackageNames: ["ghcr.io/linuxserver/**"],
+      groupName: "linuxserver digest updates",
+    },
+
     // Some LinuxServer.io repos carry stray semver tags that sort above the
     // real release stream (mistagged nightly/plugins or base-OS builds). The
     // docker datasource would otherwise pick these as "newest" and open a
