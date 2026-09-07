@@ -2,19 +2,13 @@ nameOverride: ""
 fullnameOverride: ""
 
 global:
-  # The image ships all files owned by its "searxng" user (977). Running as
-  # that user means the entrypoint skips its chown pass and starts granian.
   uid: 977
   gid: 977
 
 components:
   searxng:
     # SearXNG settings. ref: https://docs.searxng.org/admin/settings/
-    # The container reads this file via SEARXNG_SETTINGS_PATH (see env below).
-    # server.secret_key is intentionally absent: provide it as the env var
-    # SEARXNG_SECRET (e.g. via envFrom a Secret).
-    # SearXNG reads settings once at start and the pod template carries no
-    # config checksum, so after changing this run: kubectl rollout restart deployment/searxng
+    # server.secret_key comes from the SEARXNG_SECRET env var.
     cm:
       config:
         mountTo:
@@ -34,27 +28,19 @@ components:
       searxng:
         replicas: 1
         strategy:
-          type: RollingUpdate
+          type: Recreate
 
         initContainers: []
 
         extraEnv: {}
         envFrom: []
 
-        # The entrypoint requires both directories to exist and be writable:
-        # it drops a template settings.yml into /etc/searxng on start (unused,
-        # because SEARXNG_SETTINGS_PATH points at /config) and caches favicons
-        # under /var/cache/searxng.
         extraVolumes:
           - name: etc-searxng
-            emptyDir: {}
-          - name: cache
             emptyDir: {}
         extraVolumeMounts:
           - name: etc-searxng
             mountPath: /etc/searxng
-          - name: cache
-            mountPath: /var/cache/searxng
 
         containers:
           searxng:
@@ -115,6 +101,16 @@ components:
               requests:
                 cpu: 100m
                 memory: 256Mi
+
+    persistence:
+      cache:
+        enabled: false
+        existingClaim: ""  # Use a pre-existing PVC. Skips PVC creation; enabled is ignored.
+        mountTo:
+          searxng: /var/cache/searxng
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        storageClass: ""
 
     services:
       searxng:
