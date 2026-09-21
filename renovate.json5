@@ -5,17 +5,14 @@
   // The common library's placeholder example image is not a real dependency.
   ignorePaths: ["charts/common/**"],
 
-  // Never append a digest to values in Chart.yaml (appVersion, common dep).
   packageRules: [
+    // Never append a digest to values in Chart.yaml (appVersion, common dep).
     { matchFileNames: ["charts/**/Chart.yaml"], pinDigests: false },
 
-    // LinuxServer.io rebuilds all images weekly on the same tag, so their
-    // digest-only updates are frequent and low-risk individually; collapse
-    // them into one grouped PR. Other images keep individual digest PRs.
+    // One PR per chart (parentDir = chart directory name).
     {
-      matchUpdateTypes: ["digest"],
-      matchPackageNames: ["ghcr.io/linuxserver/**"],
-      groupName: "linuxserver digest updates",
+      matchFileNames: ["charts/**"],
+      groupName: "{{parentDir}} chart",
     },
 
     // Some LinuxServer.io repos carry stray semver tags that sort above the
