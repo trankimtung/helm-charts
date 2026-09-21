@@ -26,7 +26,7 @@ components:
           romm:
             image:
               repository: ghcr.io/rommapp/romm
-              tag: 5.2.0@sha256:3512f2ca455782f90247271bed23116e6bc675bc74e379be2c41696e607ab11e
+              tag: 5.3.0@sha256:dc586cb3a2c7316fcffb3dc273171b1964523f0f409e989295d26d2199df1d4e
               pullPolicy: IfNotPresent
 
             ports:
@@ -171,7 +171,7 @@ components:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 9.1.2-trixie@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
+              tag: 9.1.2-trixie@sha256:418652cfb58ef879d4978c33553735d7147016032d5aefaa14c828e611eb9dfd
               pullPolicy: IfNotPresent
 
             ports:
