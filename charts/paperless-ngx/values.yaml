@@ -55,6 +55,8 @@ components:
             env:
               PAPERLESS_PORT: "8000"
               PAPERLESS_REDIS: redis://paperless-ngx-redis:6379
+              PAPERLESS_THREADS_PER_WORKER: "2"
+              PAPERLESS_CONVERT_MEMORY_LIMIT: 256MiB
 
             extraEnv: {}
             envFrom: []
@@ -87,7 +89,7 @@ components:
                 memory: 2Gi
               requests:
                 cpu: 100m
-                memory: 512Mi
+                memory: 1Gi
 
     services:
       paperless-ngx:
