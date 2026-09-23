@@ -2,7 +2,7 @@ apiVersion: v2
 name: pihole
 description: A Helm chart for Pi-hole DNS sinkhole and ad blocker, with Unbound and optional NebulaSync support.
 type: application
-version: 0.3.0
+version: 0.4.0
 # renovate: datasource=docker depName=pihole/pihole
 appVersion: 2026.09.0
 keywords:
