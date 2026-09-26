@@ -34,7 +34,7 @@ components:
           prowlarr:
             image:
               repository: ghcr.io/linuxserver/prowlarr
-              tag: 2.6.5@sha256:c96b56d94d116a9f4de94bc23d3381689492e6c3cfb7435320e8d982e406f99a
+              tag: 2.6.5@sha256:f2b26429893d4c4cb71941b7ee50b1bdecd9d5f9f9e02d5410615e9f4f7c8d95
               pullPolicy: IfNotPresent
             ports:
               prowlarr:
@@ -202,7 +202,7 @@ components:
           sonarr:
             image:
               repository: ghcr.io/linuxserver/sonarr
-              tag: 4.0.20@sha256:a5c1a5fecbef946927ab90ad68df319ac5fe644057e5fc18cd993f01ac07b2b2
+              tag: 4.0.20@sha256:f247545d23ba8b233d6604575347e48a623fe6ad75dda02348bf81917f3b5c06
               pullPolicy: IfNotPresent
             ports:
               sonarr:
@@ -286,7 +286,7 @@ components:
           lidarr:
             image:
               repository: ghcr.io/linuxserver/lidarr
-              tag: 3.1.0@sha256:8ab0fd370b604ae034d9a9c261a9d8d873bece33d9736852e7ce4f3566e4a35d
+              tag: 3.1.0@sha256:044d616beb43c5e7810991242c6a9c42b93ff238c8c0850684939634ea751208
               pullPolicy: IfNotPresent
             ports:
               lidarr:
@@ -370,7 +370,7 @@ components:
           bazarr:
             image:
               repository: ghcr.io/linuxserver/bazarr
-              tag: 1.6.1@sha256:d24bd0048c759a468970989e9df11a6b96a7628d556d00f923e60a35ba59237b
+              tag: 1.6.2@sha256:8b30e81c4aec2991f469e78fae8afaa89ecc9b21a80e3897f50427216b55470c
               pullPolicy: IfNotPresent
             ports:
               bazarr:
@@ -453,7 +453,7 @@ components:
           qbittorrent:
             image:
               repository: ghcr.io/linuxserver/qbittorrent
-              tag: 5.2.3@sha256:457e4eec2ee3f5e4ef59f237ad51f6143deba9f7445ab48bb5204a98888ef9aa
+              tag: 5.2.3@sha256:caab2ebce30799ab342c374ea268fef4ec063a8ec3733a4e5d4a8e856ee32ce8
               pullPolicy: IfNotPresent
             ports:
               webui: {containerPort: 8080, protocol: TCP}
