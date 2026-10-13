@@ -2,9 +2,9 @@ apiVersion: v2
 name: romm
 description: A Helm chart for RomM - a self-hosted ROM manager and browser-based game library
 type: application
-version: 0.4.1
+version: 0.5.0
 # renovate: datasource=docker depName=ghcr.io/rommapp/romm
-appVersion: 5.3.1
+appVersion: 5.4.0
 keywords:
   - romm
   - roms
