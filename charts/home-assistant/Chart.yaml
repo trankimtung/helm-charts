@@ -2,9 +2,9 @@ apiVersion: v2
 name: home-assistant
 description: A Helm chart for Home Assistant, with Mosquitto MQTT and Zigbee2MQTT
 type: application
-version: 0.7.1
+version: 0.8.0
 # renovate: datasource=docker depName=ghcr.io/home-assistant/home-assistant
-appVersion: "2026.9.4"
+appVersion: "2026.10.1"
 keywords:
   - home-assistant
   - mqtt
