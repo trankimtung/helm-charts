@@ -27,7 +27,7 @@ components:
           paperless-ngx:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 3.3.1@sha256:cb91bfb468e63025a9d10c01b54c33665113668eee61b490db96de19b860b9c4
+              tag: 3.3.3@sha256:dba0242c1df1843643df4eb50ce5639f3a7900f414879088fd5bed8eaf2d456d
               pullPolicy: IfNotPresent
 
             ports:
@@ -326,7 +326,7 @@ components:
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
-              tag: 8.37.0@sha256:f29984bd1e226bf1b93ba90af06000afa8b315853e99d27b9aaa41b93f15c769
+              tag: 8.38.1@sha256:aa552cc115db488e0f0bcb07446aac13071ad51505b642c84bb894500907b42b
               pullPolicy: IfNotPresent
 
             # The chromium route is only used to convert .eml files; block
