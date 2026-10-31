@@ -34,7 +34,7 @@ components:
           prowlarr:
             image:
               repository: ghcr.io/linuxserver/prowlarr
-              tag: 2.6.5@sha256:b3b00047ed20f6ce2b16780145cb6a0acb51c9e28ea6aa6f5dcd33c7034f1797
+              tag: 2.7.0@sha256:04be30163fbaf48d6aeee7b5893c9f6614ffbad6d853971df0d6dcdf01c7f104
               pullPolicy: IfNotPresent
             ports:
               prowlarr:
@@ -202,7 +202,7 @@ components:
           sonarr:
             image:
               repository: ghcr.io/linuxserver/sonarr
-              tag: 4.0.20@sha256:48e36b608b461273b9dae857725cd0561a127f2c694b687318f6d0c5ce63e5c9
+              tag: 4.0.20@sha256:386c962ee6e260e3a5656b25df2ed056bcc9b6410e197d075f9547fd14c23bca
               pullPolicy: IfNotPresent
             ports:
               sonarr:
@@ -370,7 +370,7 @@ components:
           bazarr:
             image:
               repository: ghcr.io/linuxserver/bazarr
-              tag: 1.6.2@sha256:946dc8c5bb5331418eac60050cf40a63cb8f66ac039841dda493870e3559799c
+              tag: 1.6.2@sha256:9a625883f054e722795affe5e3ca71057e6ed817ecdf99f4a99624346fcc509c
               pullPolicy: IfNotPresent
             ports:
               bazarr:
