@@ -46,7 +46,7 @@ components:
           searxng:
             image:
               repository: searxng/searxng
-              tag: 2026.11.2-d138f443b@sha256:346251ba3ba686341878d445df42703f95ca9aad67b3e102f0f68ce731b1d625
+              tag: 2026.11.6-ac11e14c5@sha256:cd90206ff0f7235cc5e531a138e026e0531645740843f881099587f943c1c8b5
               pullPolicy: IfNotPresent
 
             ports:
