@@ -118,7 +118,7 @@ components:
           radarr:
             image:
               repository: ghcr.io/linuxserver/radarr
-              tag: 6.4.4@sha256:ade5937813c6ae415b29db729386e53fea3ecf067a019849bafbe2d2a6ec02ba
+              tag: 6.4.4@sha256:51a9ac2a9eb47afc833541e5fd6c11b86eb9f810694c22fa2429e3078e9194b2
               pullPolicy: IfNotPresent
             ports:
               radarr:
@@ -202,7 +202,7 @@ components:
           sonarr:
             image:
               repository: ghcr.io/linuxserver/sonarr
-              tag: 4.0.20@sha256:386c962ee6e260e3a5656b25df2ed056bcc9b6410e197d075f9547fd14c23bca
+              tag: 4.0.20@sha256:673dc4609a5672bc8e46069c86ffcea283a86b48d34a6c93d8da8c24a1b87571
               pullPolicy: IfNotPresent
             ports:
               sonarr:
@@ -370,7 +370,7 @@ components:
           bazarr:
             image:
               repository: ghcr.io/linuxserver/bazarr
-              tag: 1.6.2@sha256:7ef0e58216900dbce30b123e0eb65f5cb30e36f126de9474acdd2022fb069c54
+              tag: 1.6.2@sha256:832820dec70bce9e912c6eee7a95baf6551e03dbc63325a7208daaa455423752
               pullPolicy: IfNotPresent
             ports:
               bazarr:
@@ -453,7 +453,7 @@ components:
           qbittorrent:
             image:
               repository: ghcr.io/linuxserver/qbittorrent
-              tag: 5.3.0@sha256:05c1454f9a32967affc1f34f67f8cc0cc57dd805dca45489fe797095a6286556
+              tag: 5.3.0@sha256:3d4c4545d51a690a0df15a2ff99038823a88a9822df8e794526447b9afbd7384
               pullPolicy: IfNotPresent
             ports:
               webui: {containerPort: 8080, protocol: TCP}
