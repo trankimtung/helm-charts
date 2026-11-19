@@ -171,7 +171,7 @@ components:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 9.1.3-trixie@sha256:3add1a336a920ea54770a001ab6feb3da5fceea96a40373a3a2cd469b815f0b7
+              tag: 9.2.0-trixie@sha256:13010f40f0623c52f0d3527a48bbf059870e6864b4eee642cdabad3f5e240e69
               pullPolicy: IfNotPresent
 
             ports:
