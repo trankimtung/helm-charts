@@ -3,9 +3,9 @@ name: searxng
 description: A Helm chart for SearXNG - a privacy-respecting metasearch engine
 icon: https://raw.githubusercontent.com/searxng/searxng/master/client/simple/src/brand/searxng.svg
 type: application
-version: 0.4.2
+version: 0.4.3
 # renovate: datasource=docker depName=searxng/searxng
-appVersion: 2026.11.19-368baa340
+appVersion: 2026.11.23-a7163d091
 keywords:
   - searxng
   - search
