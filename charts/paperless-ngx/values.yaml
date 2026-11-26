@@ -66,6 +66,9 @@ components:
                 httpGet:
                   path: /
                   port: paperless
+                  httpHeaders:
+                    - name: Host
+                      value: localhost
                 failureThreshold: 60
                 periodSeconds: 5
 
@@ -73,12 +76,18 @@ components:
                 httpGet:
                   path: /
                   port: paperless
+                  httpHeaders:
+                    - name: Host
+                      value: localhost
                 periodSeconds: 10
 
               readiness:
                 httpGet:
                   path: /
                   port: paperless
+                  httpHeaders:
+                    - name: Host
+                      value: localhost
                 periodSeconds: 10
 
             extraVolumeMounts: []
