@@ -177,7 +177,7 @@ components:
           redis:
             image:
               repository: docker.io/valkey/valkey
-              tag: 9.2.0-trixie@sha256:13010f40f0623c52f0d3527a48bbf059870e6864b4eee642cdabad3f5e240e69
+              tag: 9.2.1-trixie@sha256:169567d6288e5f08aa141847c0c3e0864a32e727682ca6f052a20567c7103ef8
               pullPolicy: IfNotPresent
 
             ports:
@@ -255,7 +255,7 @@ components:
           tika:
             image:
               repository: docker.io/apache/tika
-              tag: 3.3.3.0@sha256:326b238b37904c94ff61fed87afe0af72e6a29fa715933b10af97b7d56f1d4cb
+              tag: 3.4.0.0@sha256:9f3e5bb9da4229a971a4839416b3204499f20668ee834fa741a6a7504bbea7bf
               pullPolicy: IfNotPresent
 
             ports:
@@ -335,7 +335,7 @@ components:
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
-              tag: 9.10.0@sha256:2ce6fcd3f5019c82b0376065b9103d6d4938d34c1c06a39a8263a9fcf47a6f5b
+              tag: 9.10.3@sha256:a7726e0f52a4344656031393f0f61fdf35cd28aaf697c7ac3aea9519d72d726e
               pullPolicy: IfNotPresent
 
             # The chromium route is only used to convert .eml files; block
